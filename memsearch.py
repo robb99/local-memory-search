@@ -25,6 +25,8 @@ from collections import defaultdict
 DEFAULT_WORKSPACE = os.environ.get("CLAWD_WORKSPACE", "/Users/robb/clawd")
 MEMORY_FILE = "MEMORY.md"
 MEMORY_DIR = "memory"
+# Additional context files to search
+CONTEXT_FILES = ["USER.md", "IDENTITY.md", "TOOLS.md"]
 
 @dataclass
 class SearchResult:
@@ -252,6 +254,12 @@ class MemorySearcher:
         if memory_dir.exists():
             for f in memory_dir.glob("*.md"):
                 files_to_index.append(f)
+                
+        # Additional context files
+        for filename in CONTEXT_FILES:
+            ctx_file = self.workspace / filename
+            if ctx_file.exists():
+                files_to_index.append(ctx_file)
                 
         # Index each file
         for filepath in files_to_index:
